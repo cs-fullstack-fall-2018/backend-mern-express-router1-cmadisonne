@@ -7,24 +7,32 @@ const GoodDeedsModel = require('../../models/goodDeeds');
 // This function is run if a GET method from the root / endpoint
 router.get('/', (req, res) => {
     GoodDeedsModel.find()
-        .then(items => res.json(items));
+        .then(items => res.json(items))
 
     // Uncomment this if you want to send text to your client once you finish saving.
     // .then(() => res.send("Showing GET request of deedAPI Routes in routes/api/goodDeeds.js");
 });
 
 // This function is run if a POST method from the root / endpoint
-router.post('/', (req, res) => {
+router.post('/', (req, res, next) => {
 
     // Create a new variable that will have you database's schema in JSON format
     // _id and date will automatically be created when this is created.
+    if (req.body.password === "love") {
+        next()
+
+    }
+    else {
+        res.send("You need a password to POST")
+    }
+
     const newDeed = new GoodDeedsModel({
         name: req.body.name,
         deed: req.body.deed,
         partOfTown: req.body.partOfTown,
-        numPeopleInvolved: req.body.numPeopleInvolved
+        numPeopleInvolved: req.body.numPeopleInvolved,
+        password: req.body.password
     });
-
     // Save the new JSON data in your database using the .save Mongoose method
     newDeed.save()
 
@@ -32,7 +40,7 @@ router.post('/', (req, res) => {
         .then(() => res.send("POST request is okay from deedAPIRoutes in routes/api/goodDeeds.js"));
 
         // Uncomment this if you want to send the item you saved to your client once you finish saving.
-        //.then(item => res.json({item}));
+        // .then(item => res.json({item}));
 });
 
 // Use module.exports to allow router to be used in other files like server.js
